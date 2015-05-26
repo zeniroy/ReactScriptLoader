@@ -18,11 +18,18 @@ var idCount = 0;
 
 var ReactScriptLoader = {
 	componentDidMount: function(key, component, scriptURL) {
+		var self = this;
 		if (typeof component.onScriptLoaded !== 'function') {
 			throw new Error('ScriptLoader: Component class must implement onScriptLoaded()');
 		}
 		if (typeof component.onScriptError !== 'function') {
 			throw new Error('ScriptLoader: Component class must implement onScriptError()');
+		}
+		if (Array.isArray(scriptURL)) {
+			scriptURL.map(function(d){
+				self.componentDidMount(key, component, d);
+			});
+			return;
 		}
 		if (loadedScripts[scriptURL]) {
 			component.onScriptLoaded();
